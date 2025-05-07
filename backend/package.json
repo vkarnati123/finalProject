@@ -3,7 +3,15 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+     "create-db": "ts-node createDatabase.ts",
+     "create-tables": "ts-node createTables.ts",
+     "dev": "npx ts-node index.ts",
+     "seed": "ts-node data/seed.ts"
+
+
+
+
   },
   "keywords": [],
   "author": "",

@@ -5,27 +5,27 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 interface User {
-  id: number;
+  id?: number;
   username: string;
   email: string;
   password: string;
 }
 
 interface Post {
-  id: number;
+  id?: number;
   user_id: number;
   caption: string;
-  image: string;
-  likes: number;
-  created_at: Date;
+  image?: string;
+  likes?: number;
+  created_at?: Date;
 }
 
 interface Comment {
-  id: number;
+  id?: number;
   post_id: number;
   user_id: number;
   content: string;
-  created_at: Date;
+  created_at?: Date;
 }
 
 interface Database {
