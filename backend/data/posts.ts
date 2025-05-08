@@ -1,4 +1,3 @@
-// scripts/seed.ts
 import { db } from '../db';
 
 async function seed() {
@@ -14,7 +13,7 @@ async function seed() {
       id: 1,
       user_id: userMap["luna_vee"], // ✅ correct key name
       caption: "Weekend party was lit 🔥💃",
-      image: "https://source.unsplash.com/400x250/?party",
+      image: "https://picsum.photos/400/250?random=1",
       likes: 2400,
       created_at: new Date(Date.now() - Math.floor(Math.random() * 1000000000)),
     },
@@ -22,7 +21,7 @@ async function seed() {
       id:2,
       user_id: userMap["devonloop"],
       caption: "My cat thinks he’s royalty 😼",
-      image: "https://source.unsplash.com/400x250/?cat",
+      image: "https://picsum.photos/400/250?random=1",
       likes: 1100,
       created_at: new Date(Date.now() - Math.floor(Math.random() * 1000000000)),
     },
@@ -30,7 +29,7 @@ async function seed() {
       id: 3,
       user_id: userMap["sky_chaser"],
       caption: "Sunset thoughts 🌇 #nofilter",
-      image: "https://source.unsplash.com/400x250/?sunset",
+      image: "https://picsum.photos/400/250?random=1",
       likes: 3200,
       created_at: new Date(Date.now() - Math.floor(Math.random() * 1000000000)),
     }

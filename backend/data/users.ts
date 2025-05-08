@@ -1,4 +1,3 @@
-// scripts/users.ts
 import { db } from '../db';
 import bcrypt from 'bcrypt';
 
