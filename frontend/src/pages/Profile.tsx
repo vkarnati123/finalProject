@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 interface Post {
@@ -24,6 +24,7 @@ const Profile = () => {
   const [error, setError] = useState('');
 
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  const currentUser = localStorage.getItem('username') ?? '';
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -57,14 +58,20 @@ const Profile = () => {
     <>
       <header className="bg-white shadow-md sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-          <a href="/home" className="text-3xl font-extrabold text-pink-500 tracking-tight">VibeSpace</a>
+          <Link to="/home" className="text-3xl font-extrabold text-pink-500 tracking-tight">VibeSpace</Link>
           <nav className="space-x-4 text-sm md:text-base">
-            <a href="/home" className="text-gray-600 hover:text-pink-500 transition">Feed</a>
-            <a href="/profile" className="text-gray-600 hover:text-pink-500 transition">My Profile</a>
-            <button onClick={() => {
-              localStorage.clear();
-              navigate('/login');
-            }} className="bg-pink-500 text-white px-4 py-2 rounded-full hover:bg-pink-400 transition">Logout</button>
+            <Link to="/home" className="text-gray-600 hover:text-pink-500 transition">Feed</Link>
+            <Link to={`/profile/${currentUser}`} className="text-gray-600 hover:text-pink-500 transition">My Profile</Link>
+            <button
+              onClick={() => {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('username');
+                navigate('/login');
+              }}
+              className="bg-pink-500 text-white px-4 py-2 rounded-full hover:bg-pink-400 transition"
+            >
+              Logout
+            </button>
           </nav>
         </div>
       </header>

@@ -9,6 +9,9 @@ interface Post {
 }
 
 const Home: React.FC<{ posts: Post[] }> = ({ posts }) => {
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  const username = localStorage.getItem('username') ?? '';
+
   return (
     <>
       {/* <!-- Navbar --> */}
@@ -16,9 +19,34 @@ const Home: React.FC<{ posts: Post[] }> = ({ posts }) => {
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <a href="/home" className="text-3xl font-extrabold text-pink-500 tracking-tight">VibeSpace</a>
           <nav className="space-x-4 text-sm md:text-base">
-            <a href="#" className="text-gray-600 hover:text-pink-500 transition">Feed</a>
+            <a href="/home" className="text-gray-600 hover:text-pink-500 transition">Feed</a>
             <a href="#" className="text-gray-600 hover:text-pink-500 transition">Explore</a>
-            <a href="/login" className="bg-pink-500 text-white px-4 py-2 rounded-full hover:bg-pink-400 transition">Login</a>
+            {isLoggedIn ? (
+              <>
+                <a
+                  href={`/profile/${username}`}
+                  className="text-gray-600 hover:text-pink-500 transition"
+                >
+                  My Profile
+                </a>
+                <button
+                  onClick={() => {
+                    localStorage.clear();
+                    window.location.href = '/login';
+                  }}
+                  className="bg-pink-500 text-white px-4 py-2 rounded-full hover:bg-pink-400 transition"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <a
+                href="/login"
+                className="bg-pink-500 text-white px-4 py-2 rounded-full hover:bg-pink-400 transition"
+              >
+                Login
+              </a>
+            )}
           </nav>
         </div>
       </header>
