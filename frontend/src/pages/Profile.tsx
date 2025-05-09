@@ -1,5 +1,6 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import UploadVibe from '@/components/UploadVibe';
 
 interface Post {
   id: number;
@@ -79,6 +80,7 @@ const Profile = () => {
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-6">
           <h3 className="text-2xl font-bold mb-6 text-gray-800">@{user.username}'s Vibes</h3>
+          <UploadVibe />
           <div className="grid md:grid-cols-3 gap-8">
             {posts.map(post => (
               <div key={post.id} className="bg-white rounded-lg shadow-md hover:shadow-xl transition p-5">
