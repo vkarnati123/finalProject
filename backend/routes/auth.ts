@@ -4,6 +4,7 @@ import { db } from '../db';
 
 const router = Router();
 
+// Signup route
 router.post('/signup', async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
 
@@ -58,11 +59,14 @@ router.post('/login', async (req: Request, res: Response) => {
 
     res.cookie('username', user.username, {
       httpOnly: true,
-      secure: false, 
+      secure: false,
       sameSite: 'lax',
     });
 
-    res.status(200).json({ message: 'Login successful' });
+    res.status(200).json({
+      message: 'Login successful',
+      username: user.username,
+    });
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ error: 'Internal server error' });

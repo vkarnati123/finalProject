@@ -12,7 +12,7 @@ async function createTables() {
       .addColumn('password', 'varchar', col => col.notNull())
       .execute();
 
-    await db.schema
+      await db.schema
       .createTable('posts')
       .ifNotExists()
       .addColumn('id', 'serial', col => col.primaryKey())
@@ -20,9 +20,9 @@ async function createTables() {
       .addColumn('caption', 'varchar', col => col.notNull())
       .addColumn('image', 'varchar')
       .addColumn('likes', 'integer', col => col.defaultTo(0))
-      .addColumn('created_at', 'timestamp', col => col.defaultTo(sql`now()`)) // ✅ fixed
+      .addColumn('created_at', 'timestamp', col => col.defaultTo(sql`now()`))
       .execute();
-
+    
     await db.schema
       .createTable('comments')
       .ifNotExists()
