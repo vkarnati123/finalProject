@@ -32,6 +32,12 @@ interface Database {
   users: User;
   posts: Post;
   comments: Comment;
+  follows: Follow;
+}
+
+export interface Follow {
+  follower_id: number;
+  followed_id: number;
 }
 
 export const db = new Kysely<Database>({

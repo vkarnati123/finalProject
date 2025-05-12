@@ -5,7 +5,7 @@ import { sql } from 'kysely';
 const router = Router();
 
 // GET /api/posts - All posts with user info
-router.get('/users', async (_req: Request, res: Response) => {
+router.get('/', async (_req: Request, res: Response) => {
   try {
     const posts = await db
       .selectFrom('posts')
@@ -16,9 +16,7 @@ router.get('/users', async (_req: Request, res: Response) => {
         'posts.image',
         'posts.likes',
         'posts.created_at',
-        'users.id as user_id',
         'users.username',
-        'users.email',
       ])
       .orderBy('posts.created_at', 'desc')
       .execute();
@@ -38,11 +36,11 @@ router.post('/:id/like', async (req: Request, res: Response) => {
   try {
     await db
       .updateTable('posts')
-      .set({ likes: sql`likes + 1` }) // Atomic update
+      .set({ likes: sql`likes + 1` })
       .where('id', '=', postId)
       .execute();
 
-    res.json({ message: 'Post liked!' });
+    res.status(200).json({ message: 'Post liked!' });
   } catch (err) {
     console.error('Error liking post:', err);
     res.status(500).json({ error: 'Could not like post' });
@@ -64,14 +62,14 @@ router.post('/', async (req: Request, res: Response) => {
       .where('username', '=', username)
       .executeTakeFirst();
 
-    if (!user) {
+    if (!user?.id) {
       return res.status(404).json({ error: 'User not found' });
     }
 
     await db
       .insertInto('posts')
       .values({
-        user_id: user.id!,
+        user_id: user.id,
         caption,
         image,
         created_at: new Date(),

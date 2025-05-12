@@ -1,5 +1,5 @@
 import { db } from './db';
-import { sql } from 'kysely'; // ✅ import for raw SQL literals
+import { sql } from 'kysely';
 
 async function createTables() {
   try {
@@ -30,7 +30,15 @@ async function createTables() {
       .addColumn('post_id', 'integer', col => col.references('posts.id').onDelete('cascade'))
       .addColumn('user_id', 'integer', col => col.references('users.id').onDelete('cascade'))
       .addColumn('content', 'varchar', col => col.notNull())
-      .addColumn('created_at', 'timestamp', col => col.defaultTo(sql`now()`)) // ✅ fixed
+      .addColumn('created_at', 'timestamp', col => col.defaultTo(sql`now()`))
+      .execute();
+
+    await db.schema
+      .createTable('follows')
+      .ifNotExists()
+      .addColumn('follower_id', 'integer', col => col.notNull().references('users.id').onDelete('cascade'))
+      .addColumn('followed_id', 'integer', col => col.notNull().references('users.id').onDelete('cascade'))
+      .addPrimaryKeyConstraint('pk_follows', ['follower_id', 'followed_id'])
       .execute();
 
     console.log('✅ Tables created successfully');
