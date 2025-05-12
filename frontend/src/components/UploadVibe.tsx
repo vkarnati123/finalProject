@@ -27,6 +27,7 @@ const UploadVibe = () => {
       setCaption('');
       setImage('');
       setMessage('✅ Vibe posted!');
+      window.location.reload();
     } catch (err: any) {
       setMessage(`❌ ${err.message}`);
     }

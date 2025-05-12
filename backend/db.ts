@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 interface User {
-  id?: number;
+  id: number;
   username: string;
   email: string;
   password: string;

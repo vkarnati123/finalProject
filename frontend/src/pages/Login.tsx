@@ -15,6 +15,16 @@ const Login = () => {
     setError('');
 
     try {
+      // // Mock login logic
+      // if (formData.email === 'luna@example.com' && formData.password === 'password123') {
+      //   localStorage.setItem('isLoggedIn', 'true');
+      //   localStorage.setItem('username', 'luna_vee');
+      //   navigate(`/profile/:luna_vee`);
+      // } else {
+      //   throw new Error('Invalid email or password');
+      // }
+
+      
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -30,6 +40,7 @@ const Login = () => {
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('username', user.username);
       navigate(`/profile/${user.username}`);
+      
     } catch (err: any) {
       console.error('Login error:', err);
       setError(err.message || 'Login error');

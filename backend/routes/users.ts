@@ -1,7 +1,23 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { db } from '../db';
 
 const router = Router();
+
+// GET /api/users - Fetch all users
+router.get('/', async (_req: Request, res: Response) => {
+  try {
+    const users = await db
+      .selectFrom('users')
+      .select(['id', 'username', 'email'])
+      .orderBy('username', 'asc')
+      .execute();
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 router.get('/:username', async (req, res) => {
   const { username } = req.params;

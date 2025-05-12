@@ -5,7 +5,7 @@ import { sql } from 'kysely';
 const router = Router();
 
 // GET /api/posts - All posts with user info
-router.get('/', async (_req: Request, res: Response) => {
+router.get('/users', async (_req: Request, res: Response) => {
   try {
     const posts = await db
       .selectFrom('posts')
@@ -16,7 +16,9 @@ router.get('/', async (_req: Request, res: Response) => {
         'posts.image',
         'posts.likes',
         'posts.created_at',
+        'users.id as user_id',
         'users.username',
+        'users.email',
       ])
       .orderBy('posts.created_at', 'desc')
       .execute();

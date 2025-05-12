@@ -4,9 +4,8 @@ import { db } from '../db';
 
 const router = Router();
 
-// Signup route
 router.post('/signup', async (req: Request, res: Response) => {
-  const { username, email, password } = req.body;
+  const { id, username, email, password } = req.body;
 
   if (!username || !email || !password) {
     return res.status(400).json({ error: 'All fields are required' });
@@ -26,6 +25,7 @@ router.post('/signup', async (req: Request, res: Response) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await db.insertInto('users').values({
+      id, 
       username,
       email,
       password: hashedPassword,
@@ -59,7 +59,7 @@ router.post('/login', async (req: Request, res: Response) => {
 
     res.cookie('username', user.username, {
       httpOnly: true,
-      secure: false,
+      secure: false, 
       sameSite: 'lax',
     });
 

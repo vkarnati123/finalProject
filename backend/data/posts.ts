@@ -5,21 +5,18 @@ async function seed() {
 
   const userMap = Object.fromEntries(users.map(user => [user.username, user.id]));
 
-
-
-
   await db.insertInto('posts').values([
     {
       id: 1,
-      user_id: userMap["luna_vee"], // ✅ correct key name
+      user_id: userMap["luna_vee"]!, // Non-null assertion
       caption: "Weekend party was lit 🔥💃",
       image: "https://picsum.photos/400/250?random=1",
       likes: 2400,
       created_at: new Date(Date.now() - Math.floor(Math.random() * 1000000000)),
     },
     {
-      id:2,
-      user_id: userMap["devonloop"],
+      id: 2,
+      user_id: userMap["devonloop"]!, // Non-null assertion
       caption: "My cat thinks he’s royalty 😼",
       image: "https://picsum.photos/400/250?random=1",
       likes: 1100,
@@ -27,11 +24,11 @@ async function seed() {
     },
     {
       id: 3,
-      user_id: userMap["sky_chaser"],
+      user_id: userMap["sky_chaser"]!, // Non-null assertion
       caption: "Sunset thoughts 🌇 #nofilter",
       image: "https://picsum.photos/400/250?random=1",
       likes: 3200,
       created_at: new Date(Date.now() - Math.floor(Math.random() * 1000000000)),
     }
   ]).execute();
-}  
+}

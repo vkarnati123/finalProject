@@ -11,10 +11,10 @@ async function seed() {
     const hashedPassword = await bcrypt.hash('password123', 10);
 
     await db.insertInto('users').values([
-      { username: 'luna_vee', email: 'luna@example.com', password: hashedPassword },
-      { username: 'devonloop', email: 'devon@example.com', password: hashedPassword },
-      { username: 'sky_chaser', email: 'sky@example.com', password: hashedPassword },
-    ]).execute();
+    { id: 1, username: 'luna_vee', email: 'luna@example.com', password: hashedPassword },
+{ id: 2, username: 'devonloop', email: 'devon@example.com', password: hashedPassword },
+{ id: 3, username: 'sky_chaser', email: 'sky@example.com', password: hashedPassword },
+]).execute();
 
     const users = await db
       .selectFrom('users')
