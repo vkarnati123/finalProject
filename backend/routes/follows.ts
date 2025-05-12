@@ -5,31 +5,36 @@ const router = Router();
 
 // Follow a user
 // POST /api/follows
-// Body: { followerId: number, followedId: number }
+// Body: { followerUsername: string, followedUsername: string }
 router.post('/', async (req: Request, res: Response) => {
-  const { followerId, followedId } = req.body;
+  const { followerUsername, followedUsername } = req.body;
 
-  if (!followerId || !followedId || followerId === followedId) {
-    return res.status(400).json({ error: 'Invalid follower or followed user ID' });
+  if (!followerUsername || !followedUsername || followerUsername === followedUsername) {
+    return res.status(400).json({ error: 'Invalid follower or followed username' });
   }
 
   try {
+    const [follower, followed] = await Promise.all([
+      db.selectFrom('users').select(['id']).where('username', '=', followerUsername).executeTakeFirst(),
+      db.selectFrom('users').select(['id']).where('username', '=', followedUsername).executeTakeFirst(),
+    ]);
+
+    if (!follower || !followed) {
+      return res.status(404).json({ error: 'One or both users not found' });
+    }
+
     const existing = await db
       .selectFrom('follows')
       .select(['follower_id'])
-      .where('follower_id', '=', followerId)
-      .where('followed_id', '=', followedId)
+      .where('follower_id', '=', follower.id)
+      .where('followed_id', '=', followed.id)
       .executeTakeFirst();
 
     if (existing) {
       return res.status(409).json({ error: 'Already following this user' });
     }
 
-    await db
-      .insertInto('follows')
-      .values({ follower_id: followerId, followed_id: followedId })
-      .execute();
-
+    await db.insertInto('follows').values({ follower_id: follower.id, followed_id: followed.id }).execute();
     res.status(201).json({ message: 'Followed successfully' });
   } catch (error) {
     console.error('Follow error:', error);
@@ -37,18 +42,27 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-
 // Unfollow a user
 // DELETE /api/follows
-// Body: { followerId: number, followedId: number }
+// Body: { followerUsername: string, followedUsername: string }
 router.delete('/', async (req: Request, res: Response) => {
-  const { followerId, followedId } = req.body;
+  const { followerUsername, followedUsername } = req.body;
 
   try {
+    const [follower, followed] = await Promise.all([
+      db.selectFrom('users').select(['id']).where('username', '=', followerUsername).executeTakeFirst(),
+      db.selectFrom('users').select(['id']).where('username', '=', followedUsername).executeTakeFirst(),
+    ]);
+
+    if (!follower || !followed) {
+      return res.status(404).json({ error: 'One or both users not found' });
+    }
+
     await db.deleteFrom('follows')
-      .where('follower_id', '=', followerId)
-      .where('followed_id', '=', followedId)
+      .where('follower_id', '=', follower.id)
+      .where('followed_id', '=', followed.id)
       .execute();
+
     res.status(200).json({ message: 'Unfollowed successfully' });
   } catch (error) {
     console.error('Unfollow error:', error);
@@ -57,19 +71,21 @@ router.delete('/', async (req: Request, res: Response) => {
 });
 
 // Get users followed by a specific user
-// GET /api/follows/:userId/following
-// Params: userId
+// GET /api/follows/:username/following
 // Returns: Array of users followed by the user
 // Example response: [{ id: 1, username: 'user1' }, { id: 2, username: 'user2' }]
-router.get('/:userId/following', async (req: Request, res: Response) => {
-  const userId = parseInt(req.params.userId);
+router.get('/:username/following', async (req: Request, res: Response) => {
+  const { username } = req.params;
 
   try {
+    const user = await db.selectFrom('users').select(['id']).where('username', '=', username).executeTakeFirst();
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
     const following = await db
       .selectFrom('follows')
       .innerJoin('users', 'users.id', 'follows.followed_id')
       .select(['users.id', 'users.username'])
-      .where('follows.follower_id', '=', userId)
+      .where('follows.follower_id', '=', user.id)
       .execute();
 
     res.status(200).json(following);
@@ -80,19 +96,21 @@ router.get('/:userId/following', async (req: Request, res: Response) => {
 });
 
 // Get followers of a specific user
-// GET /api/follows/:userId/followers
-// Params: userId
+// GET /api/follows/:username/followers
 // Returns: Array of users following the user
 // Example response: [{ id: 1, username: 'user1' }, { id: 2, username: 'user2' }]
-router.get('/:userId/followers', async (req: Request, res: Response) => {
-  const userId = parseInt(req.params.userId);
+router.get('/:username/followers', async (req: Request, res: Response) => {
+  const { username } = req.params;
 
   try {
+    const user = await db.selectFrom('users').select(['id']).where('username', '=', username).executeTakeFirst();
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
     const followers = await db
       .selectFrom('follows')
       .innerJoin('users', 'users.id', 'follows.follower_id')
       .select(['users.id', 'users.username'])
-      .where('follows.followed_id', '=', userId)
+      .where('follows.followed_id', '=', user.id)
       .execute();
 
     res.status(200).json(followers);
@@ -102,22 +120,27 @@ router.get('/:userId/followers', async (req: Request, res: Response) => {
   }
 });
 
-// Returns the number of followers and following for a user
-// GET /api/follows/:userId/stats
-// Params: userId
+// Get follower/following stats for a user
+// GET /api/follows/:username/stats
 // Returns: { followers: number, following: number }
 // Example response: { followers: 10, following: 5 }
-router.get('/:userId/stats', async (req, res) => {
-  const userId = parseInt(req.params.userId);
+router.get('/:username/stats', async (req: Request, res: Response) => {
+  const { username } = req.params;
+
   try {
+    const user = await db.selectFrom('users').select(['id']).where('username', '=', username).executeTakeFirst();
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
     const [followers, following] = await Promise.all([
-      db.selectFrom('follows').select(['follower_id']).where('followed_id', '=', userId).execute(),
-      db.selectFrom('follows').select(['followed_id']).where('follower_id', '=', userId).execute()
+      db.selectFrom('follows').select(['follower_id']).where('followed_id', '=', user.id).execute(),
+      db.selectFrom('follows').select(['followed_id']).where('follower_id', '=', user.id).execute(),
     ]);
 
-    res.json({ followers: followers.length, following: following.length });
+    res.status(200).json({ followers: followers.length, following: following.length });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch stats' });
+    console.error('Stats error:', error);
+    res.status(500).json({ error: 'Could not fetch stats' });
   }
 });
+
 export default router;
