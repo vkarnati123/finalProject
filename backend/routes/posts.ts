@@ -84,4 +84,29 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
+// DELETE /api/posts/:id - Delete a post by ID
+router.delete('/:id', async (req: Request, res: Response) => {
+  const postId = parseInt(req.params.id);
+
+  if (isNaN(postId)) {
+    return res.status(400).json({ error: 'Invalid post ID' });
+  }
+
+  try {
+    const result = await db
+      .deleteFrom('posts')
+      .where('id', '=', postId)
+      .execute();
+
+    if (result[0]?.numDeletedRows === 0n) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    res.status(200).json({ message: 'Post deleted successfully' });
+  } catch (err) {
+    console.error('Delete post error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 export default router;
