@@ -102,4 +102,22 @@ router.get('/:userId/followers', async (req: Request, res: Response) => {
   }
 });
 
+// Returns the number of followers and following for a user
+// GET /api/follows/:userId/stats
+// Params: userId
+// Returns: { followers: number, following: number }
+// Example response: { followers: 10, following: 5 }
+router.get('/:userId/stats', async (req, res) => {
+  const userId = parseInt(req.params.userId);
+  try {
+    const [followers, following] = await Promise.all([
+      db.selectFrom('follows').select(['follower_id']).where('followed_id', '=', userId).execute(),
+      db.selectFrom('follows').select(['followed_id']).where('follower_id', '=', userId).execute()
+    ]);
+
+    res.json({ followers: followers.length, following: following.length });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch stats' });
+  }
+});
 export default router;
