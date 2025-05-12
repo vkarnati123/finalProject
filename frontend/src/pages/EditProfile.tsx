@@ -8,13 +8,13 @@ const EditProfile = () => {
   const [formData, setFormData] = useState({ email: '', bio: '', avatar: '', username: '' });
   const [activeModal, setActiveModal] = useState<'avatar' | 'username' | 'bio' | 'delete' | null>(null);
   const [message, setMessage] = useState('');
-  const currentUser = localStorage.getItem('username') ?? '';
+  const loggedInUser = localStorage.getItem('username') ?? '';
   const navigate = useNavigate();
 
 
   useEffect(() => {
-    if (currentUser) {
-      fetch(`${import.meta.env.VITE_API_URL}/api/users/${currentUser}`)
+    if (loggedInUser) {
+      fetch(`${import.meta.env.VITE_API_URL}/api/users/${loggedInUser}`)
         .then(res => res.json())
         .then(data =>
           setFormData({
@@ -25,7 +25,8 @@ const EditProfile = () => {
           })
         );
       }
-    }, [currentUser]);
+      
+    }, [loggedInUser]);
     
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -34,7 +35,7 @@ const EditProfile = () => {
   
 
   const handleSave = async () => {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${currentUser}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${loggedInUser}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
@@ -52,7 +53,7 @@ const EditProfile = () => {
           <Link to="/home" className="text-3xl font-extrabold text-pink-500 tracking-tight">VibeSpace</Link>
           <nav className="space-x-4 text-sm md:text-base">
             <Link to="/home" className="text-gray-600 hover:text-pink-500 transition">Feed</Link>
-            <Link to={`/profile/${currentUser}`} className="text-gray-600 hover:text-pink-500 transition">My Profile</Link>
+            <Link to={`/profile/${loggedInUser}`} className="text-gray-600 hover:text-pink-500 transition">My Profile</Link>
             <button
               onClick={() => {
                 localStorage.removeItem('isLoggedIn');
@@ -91,16 +92,9 @@ const EditProfile = () => {
                   className="absolute bottom-1 right-1 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 group-hover:bg-gray-200 transition"
                   aria-label="Edit avatar"
                 >
-                  <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-6 h-6 text-gray-800 group-hover:text-gray-800 transition"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536M9 11l6-6 3 3-6 6H9v-3z" />
-                  </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-red-500 hover:text-red-700 transition" fill="none" viewBox="1 1 20 20" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536M9 11l6.586-6.586a2 2 0 012.828 0l1.172 1.172a2 2 0 010 2.828L13 15H9v-4z" />
+              </svg>
                 </button>
             </div>
 
@@ -109,7 +103,7 @@ const EditProfile = () => {
               onClick={() => setActiveModal('username')}
               className="text-2xl font-bold cursor-pointer hover:underline transition"
             >
-              {formData.username || currentUser} 
+              {formData.username || loggedInUser} 
             </h3>
             
 
@@ -126,7 +120,7 @@ const EditProfile = () => {
               onClick={async () => {
                 const confirmDelete = window.confirm('Are you sure you want to delete your account?');
                 if (confirmDelete) {
-                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${currentUser}`, {
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${loggedInUser}`, {
                   method: 'DELETE',
                 });
                 if (res.ok) {
@@ -201,13 +195,7 @@ const EditProfile = () => {
           )}
         </div>
       </section>
-      {/* Recent Vibes */}
-      <section className="py-12 bg-gray-50">
-        <div className="container mx-auto px-6">
-          <h3 className="text-2xl font-bold mb-6 text-gray-800">Recent Vibes</h3>
-          
-        </div>
-      </section>
+      
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-6 mt-12">

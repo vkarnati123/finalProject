@@ -34,7 +34,7 @@ const UploadVibe = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg p-6 mt-10">
+    <div className="w-5/6 max-w-5xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-10">
       <h3 className="text-xl font-bold mb-4 text-pink-500">Post a Vibe 🎉</h3>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input

@@ -7,6 +7,7 @@ import Home from '../pages/Home';
 import Login from '../pages/Login';
 import Signup from '../pages/Signup';
 import Profile from '../pages/Profile';
+import Activity from '../pages/Activity';
 
 export default function AppRoutes() {
   const [posts, setPosts] = useState([]);
@@ -28,6 +29,7 @@ export default function AppRoutes() {
         <Route path="/profile/:username" element={<Profile />} />
         <Route path="/edit" element={<EditProfile />} />
         <Route path="/create" element={<CreatePost />} />
+        <Route path="/activity" element={<Activity />} />
       </Routes>
     </Router>
   );
