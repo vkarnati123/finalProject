@@ -5,7 +5,7 @@ import { sql } from 'kysely';
 const router = Router();
 
 // GET /api/posts - All posts with user info
-router.get('/users', async (_req: Request, res: Response) => {
+router.get('/', async (_req: Request, res: Response) => {
   try {
     const posts = await db
       .selectFrom('posts')
