@@ -10,6 +10,8 @@ async function seedUsers() {
       username: 'luna_vee',
       email: 'luna@example.com',
       password: hashedPassword,
+      
+
     },
     {
       id: 2,

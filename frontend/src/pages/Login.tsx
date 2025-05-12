@@ -15,16 +15,7 @@ const Login = () => {
     setError('');
 
     try {
-      // // Mock login logic
-      // if (formData.email === 'luna@example.com' && formData.password === 'password123') {
-      //   localStorage.setItem('isLoggedIn', 'true');
-      //   localStorage.setItem('username', 'luna_vee');
-      //   navigate(`/profile/:luna_vee`);
-      // } else {
-      //   throw new Error('Invalid email or password');
-      // }
-
-      
+         
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
