@@ -4,7 +4,14 @@ const LikeButton = ({ postId, initialLikes }: { postId: number; initialLikes: nu
   const [likes, setLikes] = useState(initialLikes);
   const [isLiking, setIsLiking] = useState(false);
 
+  // Get the logged-in user from localStorage
+  const loggedInUser = localStorage.getItem('username');
+
   const handleLike = async () => {
+    if (!loggedInUser) {
+      return;
+    }
+
     if (isLiking) return; // Prevent multiple clicks
     setIsLiking(true);
 
@@ -28,8 +35,10 @@ const LikeButton = ({ postId, initialLikes }: { postId: number; initialLikes: nu
   return (
     <button
       onClick={handleLike}
-      className="flex items-center gap-2 text-pink-600 hover:text-pink-500 transition"
-      disabled={isLiking}
+      className={`flex items-center gap-2 ${
+        loggedInUser ? 'text-pink-600 hover:text-pink-500' : 'text-gray-400 cursor-not-allowed'
+      } transition`}
+      disabled={isLiking || !loggedInUser}
     >
       ❤️ {likes}
     </button>
